@@ -108,7 +108,7 @@ main{max-width:920px;margin:auto;padding:24px 16px 60px}header{text-align:center
 </main>
 <script>
 /* ==========================================================
-   ALLEEN DIT DEEL HOEF JE AAN TE PASSEN
+   QUIZ INSTELLINGEN
    ========================================================== */
 
 const cijferNaarLetter = {
@@ -134,6 +134,7 @@ const cijferNaarLetter = {
   20:"U"
 };
 
+
 const vragen = [
   {huis:1, foto:"fotos/gm2.jpeg"},
   {huis:2, foto:"fotos/dv3.jpeg"},
@@ -153,8 +154,11 @@ const vragen = [
   {huis:16, foto:"fotos/dv1.jpeg"}
 ];
 
-// Laat leeg ("") als je geen automatische controle wilt.
+
+// Het uiteindelijke antwoord
 const juisteWoord = "VLOEDTALUD MET FLADDERIEP";
+
+// Lengte van de drie woorden
 const woordLengtes = [10, 3, 9];
 
 
@@ -170,7 +174,7 @@ const GOOGLE_FORM_ANSWER_ENTRY = "entry.88578047";
 
 
 /* ==========================================================
-   QUIZ OPBOUWEN
+   ELEMENTEN OP DE PAGINA
    ========================================================== */
 
 const key = document.getElementById("key");
@@ -180,69 +184,94 @@ const progress = document.getElementById("progress");
 const success = document.getElementById("success");
 
 
-/* Cijfer → letter tabel */
+/* ==========================================================
+   CIJFER → LETTER TABEL
+   ========================================================== */
 
 Object.entries(cijferNaarLetter).forEach(([nummer, letter]) => {
+
   const span = document.createElement("span");
+
   span.textContent = `${nummer} = ${letter}`;
+
   key.appendChild(span);
+
 });
 
 
-/* Foto's en antwoordvelden */
+/* ==========================================================
+   FOTO'S EN ANTWOORDVELDEN
+   ========================================================== */
 
 vragen.forEach((vraag, index) => {
 
   const card = document.createElement("article");
   card.className = "card";
 
+
+  // Foto
   const img = document.createElement("img");
+
   img.className = "photo";
   img.src = vraag.foto;
-  img.alt = `Foto bij huisnummer ${vraag.huis}`;
+  img.alt = `Foto ${index + 1}`;
 
+
+  // Als foto niet gevonden wordt
   img.onerror = () => {
+
     const missing = document.createElement("div");
+
     missing.className = "missing";
+
     missing.innerHTML =
       `<div><b>Foto ontbreekt</b><br>${vraag.foto}</div>`;
 
     img.replaceWith(missing);
+
   };
 
 
+  // Tekstgedeelte
   const body = document.createElement("div");
+
   body.className = "body";
 
 
-const house = document.createElement("div");
-house.className = "house";
-house.textContent = `Foto ${index + 1}`;
+  // Foto 1, Foto 2, Foto 3...
+  const house = document.createElement("div");
+
+  house.className = "house";
+
+  house.textContent = `Foto ${index + 1}`;
 
 
+  // Rij met label + invoerveld
   const row = document.createElement("div");
+
   row.className = "row";
 
 
   const label = document.createElement("label");
+
   label.textContent = "Jouw letter:";
 
 
   const input = document.createElement("input");
 
-  // Belangrijk: hiermee kan de instuurknop
-  // deze velden later allemaal terugvinden.
   input.id = `antwoord-${index}`;
 
   input.maxLength = 1;
+
   input.autocomplete = "off";
 
   input.setAttribute(
     "aria-label",
-    `Letter voor huisnummer ${vraag.huis}`
+    `Letter voor foto ${index + 1}`
   );
 
 
+  // Alleen letters toestaan
   input.addEventListener("input", () => {
 
     input.value = input.value
@@ -269,7 +298,7 @@ house.textContent = `Foto ${index + 1}`;
 
 
 /* ==========================================================
-   WOORD BIJWERKEN
+   GEHEIME WOORD BIJWERKEN
    ========================================================== */
 
 function update() {
@@ -278,19 +307,24 @@ function update() {
     ...document.querySelectorAll('input[id^="antwoord-"]')
   ];
 
+
   const letters = inputs.map(
     input => input.value || "_"
   );
+
 
   const filled = inputs.filter(
     input => input.value
   ).length;
 
-  // Woorden netjes apart weergeven
+
+  // De drie woorden apart opbouwen
   let output = [];
+
   let positie = 0;
 
-  woordLengtes.forEach((lengte, index) => {
+
+  woordLengtes.forEach((lengte) => {
 
     const woord = letters
       .slice(positie, positie + lengte)
@@ -299,20 +333,35 @@ function update() {
     output.push(woord);
 
     positie += lengte;
+
   });
 
+
+  // Woorden met ruimte ertussen tonen
   word.innerHTML = output
     .map(woord => `<span class="quizwoord">${woord}</span>`)
     .join('<span class="woordspatie"></span>');
 
+
   progress.textContent =
     `${filled} van ${inputs.length} antwoorden ingevuld`;
+
+
+  // Controleer of het antwoord goed is
+  const ingevuldWoord = inputs
+    .map(input => input.value)
+    .join("");
+
+
+  const controleWoord = juisteWoord
+    .toUpperCase()
+    .replace(/\s/g, "");
+
 
   if (
     juisteWoord &&
     filled === inputs.length &&
-    inputs.map(input => input.value).join("") ===
-      juisteWoord.toUpperCase().replace(/\s/g, "")
+    ingevuldWoord === controleWoord
   ) {
 
     success.style.display = "block";
@@ -322,6 +371,7 @@ function update() {
     success.style.display = "none";
 
   }
+
 }
 
 
@@ -338,11 +388,14 @@ document
   .getElementById("submitButton")
   .addEventListener("click", () => {
 
+
     const message =
       document.getElementById("submitMessage");
 
+
     const naam =
-      document.getElementById("naam")
+      document
+        .getElementById("naam")
         .value
         .trim();
 
@@ -360,8 +413,7 @@ document
         .join("");
 
 
-    /* Naam controleren */
-
+    // Naam controleren
     if (!naam) {
 
       message.textContent =
@@ -372,29 +424,31 @@ document
         .focus();
 
       return;
+
     }
 
 
-    /* Controleren of alle letters zijn ingevuld */
-
+    // Alle foto's moeten ingevuld zijn
     if (antwoord.length !== inputs.length) {
 
       message.textContent =
         `Vul eerst alle ${inputs.length} letters in.`;
 
       return;
+
     }
 
 
-    /* Gegevens klaarmaken voor Google Forms */
-
+    // Gegevens voor Google Forms
     const formData =
       new URLSearchParams();
+
 
     formData.append(
       GOOGLE_FORM_NAME_ENTRY,
       naam
     );
+
 
     formData.append(
       GOOGLE_FORM_ANSWER_ENTRY,
@@ -402,8 +456,7 @@ document
     );
 
 
-    /* Versturen */
-
+    // Versturen
     fetch(GOOGLE_FORM_URL, {
 
       method: "POST",
@@ -413,6 +466,7 @@ document
       body: formData
 
     })
+
 
     .then(() => {
 
@@ -424,6 +478,7 @@ document
         .disabled = true;
 
     })
+
 
     .catch(() => {
 
