@@ -12,13 +12,89 @@ main{max-width:920px;margin:auto;padding:24px 16px 60px}header{text-align:center
 .progress{color:var(--muted);font-size:.9rem;margin:16px 2px}.quiz{display:grid;gap:18px}.card{overflow:hidden}.photo{display:block;width:100%;aspect-ratio:16/10;object-fit:cover;background:#e8e5df}.missing{aspect-ratio:16/10;display:grid;place-items:center;text-align:center;color:#777;background:#e8e5df;padding:20px}.body{padding:16px}.house{font-size:1.15rem;font-weight:800;margin-bottom:11px}.row{display:flex;align-items:center;gap:10px}input{width:62px;height:48px;border:2px solid var(--line);border-radius:10px;text-align:center;font-size:1.3rem;text-transform:uppercase;outline:0}input:focus{border-color:var(--accent)}
 .wordbox{text-align:center;margin-top:24px;padding:18px}.word{font-size:clamp(1.7rem,7vw,3rem);font-weight:900;letter-spacing:.25em;min-height:1.2em}.hint{color:var(--muted);font-size:.9rem;margin-top:7px}.success{display:none;color:var(--good);font-weight:800;margin-top:12px}
 @media(min-width:720px){.quiz{grid-template-columns:1fr 1fr}.card:last-child:nth-child(odd){grid-column:1/-1}}
+
+   .submit-box {
+  margin-top:24px;
+  padding-top:20px;
+  border-top:1px solid var(--line);
+  text-align:left;
+}
+
+.submit-box h2 {
+  font-size:1.2rem;
+  margin:0 0 14px;
+}
+
+.submit-box label {
+  display:block;
+  font-weight:600;
+  margin-bottom:6px;
+}
+
+.name-input {
+  width:100%;
+  height:48px;
+  text-align:left;
+  text-transform:none;
+  font-size:1rem;
+  padding:0 12px;
+  margin-bottom:12px;
+}
+
+.submit-box button {
+  border:0;
+  background:var(--accent);
+  color:white;
+  padding:12px 18px;
+  border-radius:10px;
+  font-size:1rem;
+  cursor:pointer;
+}
+
+.submit-message {
+  margin-top:10px;
+  font-size:.92rem;
+  color:var(--muted);
+}
+
 </style>
 </head>
 <body><main>
 <header><h1>📷 Fotoquiz</h1><p class="sub">Vind het perceel dat het dichtste aan de foto grenst, vul de letter in die bij het huisnummer hoort en ontdek het geheime woord.</p></header>
 <section class="decoder"><div class="decoder-inner"><div class="title">🔑 Cijfer → letter</div><div class="key" id="key"></div></div></section>
 <div class="progress" id="progress"></div><section class="quiz" id="quiz"></section>
-<section class="wordbox"><strong>Geheime woord</strong><div class="word" id="word"></div><div class="hint">Vul bij iedere foto één letter in.</div><div class="success" id="success">🎉 Goed gedaan! Je hebt het woord gevonden.</div></section>
+<section class="wordbox">
+   
+<div class="word-box">
+  <div><strong>Geheime woord</strong></div>
+  <div class="word" id="word"></div>
+  <div class="hint">Vul bij elke foto één letter in.</div>
+
+  <div class="success" id="success">
+    🎉 Goed gedaan! Je hebt het woord gevonden.
+  </div>
+
+  <div class="submit-box">
+    <h2>Antwoord insturen</h2>
+
+    <label for="naam">Naam</label>
+    <input
+      id="naam"
+      class="name-input"
+      type="text"
+      autocomplete="name"
+      placeholder="Jouw naam"
+    >
+
+    <button id="submitButton" type="button">
+      Antwoord insturen
+    </button>
+
+    <div class="submit-message" id="submitMessage"></div>
+  </div>
+</div>
+
+</section>
 </main>
 <script>
 /* ==========================================================
@@ -43,19 +119,79 @@ const vragen = [
 // Laat leeg ("") als je geen automatische controle wilt.
 const juisteWoord = "";
 /* ========================================================== */
+const GOOGLE_FORM_URL = 
+  "https://docs.google.com/forms/d/e/1FAIpQLSebW2yrvrGmrFdsrRs_W8BL35glJRTStxoAyxNOAyQdMKDgmg/formResponse";
+
+const GOOGLE_FORM_NAME_ENTRY = "entry.699970918";
+const GOOGLE_FORM_ANSWER_ENTRY = "entry.88578047";
+/* ========================================================== */
 
 const key=document.getElementById('key'),quiz=document.getElementById('quiz'),word=document.getElementById('word'),progress=document.getElementById('progress'),success=document.getElementById('success');
-Object.entries(cijferNaarLetter).forEach(([n,l])=>{const s=document.createElement('span');s.textContent=`${n} = ${l}`;key.appendChild(s)});
+Object.entries(cijferNaarLetter).forEach(([n,l])=>{const s=document.('span');s.textContent=`${n} = ${l}`;key.appendChild(s)});
 vragen.forEach((v,i)=>{
-  const card=document.createElement('article');card.className='card';
-  const img=document.createElement('img');img.className='photo';img.src=v.foto;img.alt=`Foto bij huisnummer ${v.huisnummer}`;
-  img.onerror=()=>{const d=document.createElement('div');d.className='missing';d.innerHTML=`<div><b>Foto ontbreekt</b><br>${v.foto}</div>`;img.replaceWith(d)};
-  const body=document.createElement('div');body.className='body';
-  const h=document.createElement('div');h.className='house';h.textContent=`Huisnummer ${v.huisnummer}`;
-  const row=document.createElement('div');row.className='row';row.innerHTML='<label>Jouw letter:</label>';
-  const input=document.createElement('input');input.maxLength=1;input.autocomplete='off';input.setAttribute('aria-label',`Letter voor huisnummer ${v.huisnummer}`);
+  const card=document.('article');card.className='card';
+  const img=document.('img');img.className='photo';img.src=v.foto;img.alt=`Foto bij huisnummer ${v.huis}`;
+  img.onerror=()=>{const d=document.('div');d.className='missing';d.innerHTML=`<div><b>Foto ontbreekt</b><br>${v.foto}</div>`;img.replaceWith(d)};
+  const body=document.('div');body.className='body';
+  const h=document.('div');h.className='house';h.textContent=`Huisnummer ${v.huis}`;
+  const row=document.('div');row.className='row';row.innerHTML='<label>Jouw letter:</label>';
+  const input=document.('input');input.maxLength=1;input.autocomplete='off';input.setAttribute('aria-label',`Letter voor huisnummer ${v.huis}`);
   input.addEventListener('input',()=>{input.value=input.value.replace(/[^a-z]/gi,'').toUpperCase();update()});row.appendChild(input);body.append(h,row);card.append(img,body);quiz.appendChild(card);
 });
-function update(){const inputs=[...document.querySelectorAll('input')],letters=inputs.map(i=>i.value||'_'),filled=inputs.filter(i=>i.value).length;word.textContent=letters.join('');progress.textContent=`${filled} van ${inputs.length} antwoorden ingevuld`;success.style.display=(juisteWoord&&filled===inputs.length&&inputs.map(i=>i.value).join('')===juisteWoord.toUpperCase())?'block':'none'}
+function update(){
+  const inputs = [...document.querySelectorAll('input[id^="antwoord-"]')];
+  const letters = inputs.map(i => i.value || '_');
+  const filled = inputs.filter(i => i.value).length;
+
+  word.textContent = letters.join('');
+  progress.textContent = `${filled} van ${inputs.length} antwoorden ingevuld`;
+
+  success.style.display =
+    juisteWoord &&
+    filled === inputs.length &&
+    inputs.map(i => i.value).join('') === juisteWoord.toUpperCase()
+      ? 'block'
+      : 'none';
+}
+
 update();
+
+document.getElementById("submitButton").addEventListener("click", () => {
+  const message = document.getElementById("submitMessage");
+  const naam = document.getElementById("naam").value.trim();
+
+  const inputs = [...document.querySelectorAll('input[id^="antwoord-"]')];
+  const antwoord = inputs.map(input => input.value).join("");
+
+  if (!naam) {
+    message.textContent = "Vul eerst je naam in.";
+    document.getElementById("naam").focus();
+    return;
+  }
+
+  if (antwoord.length !== inputs.length) {
+    message.textContent = `Vul eerst alle ${inputs.length} letters in.`;
+    return;
+  }
+
+  const formData = new URLSearchParams();
+
+  formData.append(GOOGLE_FORM_NAME_ENTRY, naam);
+  formData.append(GOOGLE_FORM_ANSWER_ENTRY, antwoord);
+
+  fetch(GOOGLE_FORM_URL, {
+    method: "POST",
+    mode: "no-cors",
+    body: formData
+  })
+  .then(() => {
+    message.textContent = "✅ Je antwoord is ingestuurd!";
+    document.getElementById("submitButton").disabled = true;
+  })
+  .catch(() => {
+    message.textContent =
+      "Er ging iets mis met insturen. Controleer de Google Forms-instellingen.";
+  });
+});
+
 </script></body></html>
