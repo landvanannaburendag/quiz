@@ -15,7 +15,7 @@ main{max-width:920px;margin:auto;padding:24px 16px 60px}header{text-align:center
 </style>
 </head>
 <body><main>
-<header><h1>📷 Fotoquiz</h1><p class="sub">Vind de huizen, vul de letters in en ontdek het geheime woord.</p></header>
+<header><h1>📷 Fotoquiz</h1><p class="sub">Vind het perceel dat het dichtste aan de foto grenst, vul de letter in die bij het huisnummer hoort en ontdek het geheime woord.</p></header>
 <section class="decoder"><div class="decoder-inner"><div class="title">🔑 Cijfer → letter</div><div class="key" id="key"></div></div></section>
 <div class="progress" id="progress"></div><section class="quiz" id="quiz"></section>
 <section class="wordbox"><strong>Geheime woord</strong><div class="word" id="word"></div><div class="hint">Vul bij iedere foto één letter in.</div><div class="success" id="success">🎉 Goed gedaan! Je hebt het woord gevonden.</div></section>
@@ -29,14 +29,14 @@ const cijferNaarLetter = {
 };
 
 const vragen = [
-  {huisnummer:1, foto:"fotos/gm2.jpg"},
-  {huisnummer:2, foto:"fotos/dv3.jpg"},
-  {huisnummer:3, foto:"fotos/wb1.jpg"},
-  {huisnummer:4, foto:"fotos/dv5.jpg"},
-  {huisnummer:5, foto:"fotos/hvp9.jpg"},
-  {huisnummer:6, foto:"fotos/dv2.jpg"},
-  {huisnummer:7, foto:"fotos/dv20.jpg"},
-  {huisnummer:8, foto:"fotos/hvp1.jpg"}
+  {huis:1, foto:"fotos/gm2.jpg"},
+  {huis:2, foto:"fotos/dv3.jpg"},
+  {huis:3, foto:"fotos/wb1.jpg"},
+  {huis:4, foto:"fotos/dv5.jpg"},
+  {huis:5, foto:"fotos/hvp9.jpg"},
+  {huis:6, foto:"fotos/dv2.jpg"},
+  {huis:7, foto:"fotos/dv20.jpg"},
+  {huis:8, foto:"fotos/hvp1.jpg"}
 
 ];
 
