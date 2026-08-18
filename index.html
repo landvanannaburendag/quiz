@@ -57,6 +57,16 @@ main{max-width:920px;margin:auto;padding:24px 16px 60px}header{text-align:center
   color:var(--muted);
 }
 
+.quizwoord {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.woordspatie {
+  display: inline-block;
+  width: 1.2em;
+}
+
 </style>
 </head>
 <body><main>
@@ -136,7 +146,8 @@ const vragen = [
 ];
 
 // Laat leeg ("") als je geen automatische controle wilt.
-const juisteWoord = "";
+const juisteWoord = "VLOEDTALUD MET FLADDERIEP";
+const woordLengtes = [10, 3, 9];
 
 
 /* ==========================================================
@@ -267,18 +278,33 @@ function update() {
     input => input.value
   ).length;
 
+  // Woorden netjes apart weergeven
+  let output = [];
+  let positie = 0;
 
-  word.textContent = letters.join("");
+  woordLengtes.forEach((lengte, index) => {
+
+    const woord = letters
+      .slice(positie, positie + lengte)
+      .join(" ");
+
+    output.push(woord);
+
+    positie += lengte;
+  });
+
+  word.innerHTML = output
+    .map(woord => `<span class="quizwoord">${woord}</span>`)
+    .join('<span class="woordspatie"></span>');
 
   progress.textContent =
     `${filled} van ${inputs.length} antwoorden ingevuld`;
-
 
   if (
     juisteWoord &&
     filled === inputs.length &&
     inputs.map(input => input.value).join("") ===
-      juisteWoord.toUpperCase()
+      juisteWoord.toUpperCase().replace(/\s/g, "")
   ) {
 
     success.style.display = "block";
@@ -288,7 +314,6 @@ function update() {
     success.style.display = "none";
 
   }
-
 }
 
 
