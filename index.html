@@ -100,8 +100,28 @@ main{max-width:920px;margin:auto;padding:24px 16px 60px}header{text-align:center
 /* ==========================================================
    ALLEEN DIT DEEL HOEF JE AAN TE PASSEN
    ========================================================== */
+
 const cijferNaarLetter = {
-  1:"D", 2:"L", 3:"E", 4:"K", 5:"T", 6:"H", 7:"G", 8:"Z", 9:"A", 10:"P", 11:"S", 12:"M", 13:"O", 14:"V", 15:"R", 16:"B", 17:"I", 18:"J", 19:"F", 20:"U"
+  1:"D",
+  2:"L",
+  3:"E",
+  4:"K",
+  5:"T",
+  6:"H",
+  7:"G",
+  8:"Z",
+  9:"A",
+  10:"P",
+  11:"S",
+  12:"M",
+  13:"O",
+  14:"V",
+  15:"R",
+  16:"B",
+  17:"I",
+  18:"J",
+  19:"F",
+  20:"U"
 };
 
 const vragen = [
@@ -113,85 +133,272 @@ const vragen = [
   {huis:6, foto:"fotos/dv2.jpeg"},
   {huis:7, foto:"fotos/dv20.jpeg"},
   {huis:8, foto:"fotos/hvp1.jpeg"}
-
 ];
 
 // Laat leeg ("") als je geen automatische controle wilt.
 const juisteWoord = "";
-/* ========================================================== */
-const GOOGLE_FORM_URL = 
+
+
+/* ==========================================================
+   GOOGLE FORMS
+   ========================================================== */
+
+const GOOGLE_FORM_URL =
   "https://docs.google.com/forms/d/e/1FAIpQLSebW2yrvrGmrFdsrRs_W8BL35glJRTStxoAyxNOAyQdMKDgmg/formResponse";
 
 const GOOGLE_FORM_NAME_ENTRY = "entry.699970918";
 const GOOGLE_FORM_ANSWER_ENTRY = "entry.88578047";
-/* ========================================================== */
 
-const key=document.getElementById('key'),quiz=document.getElementById('quiz'),word=document.getElementById('word'),progress=document.getElementById('progress'),success=document.getElementById('success');
-Object.entries(cijferNaarLetter).forEach(([n,l])=>{const s=document.('span');s.textContent=`${n} = ${l}`;key.appendChild(s)});
-vragen.forEach((v,i)=>{
-  const card=document.('article');card.className='card';
-  const img=document.('img');img.className='photo';img.src=v.foto;img.alt=`Foto bij huisnummer ${v.huis}`;
-  img.onerror=()=>{const d=document.('div');d.className='missing';d.innerHTML=`<div><b>Foto ontbreekt</b><br>${v.foto}</div>`;img.replaceWith(d)};
-  const body=document.('div');body.className='body';
-  const h=document.('div');h.className='house';h.textContent=`Huisnummer ${v.huis}`;
-  const row=document.('div');row.className='row';row.innerHTML='<label>Jouw letter:</label>';
-  const input=document.('input');input.maxLength=1;input.autocomplete='off';input.setAttribute('aria-label',`Letter voor huisnummer ${v.huis}`);
-  input.addEventListener('input',()=>{input.value=input.value.replace(/[^a-z]/gi,'').toUpperCase();update()});row.appendChild(input);body.append(h,row);card.append(img,body);quiz.appendChild(card);
+
+/* ==========================================================
+   QUIZ OPBOUWEN
+   ========================================================== */
+
+const key = document.getElementById("key");
+const quiz = document.getElementById("quiz");
+const word = document.getElementById("word");
+const progress = document.getElementById("progress");
+const success = document.getElementById("success");
+
+
+/* Cijfer → letter tabel */
+
+Object.entries(cijferNaarLetter).forEach(([nummer, letter]) => {
+  const span = document.createElement("span");
+  span.textContent = `${nummer} = ${letter}`;
+  key.appendChild(span);
 });
-function update(){
-  const inputs = [...document.querySelectorAll('input[id^="antwoord-"]')];
-  const letters = inputs.map(i => i.value || '_');
-  const filled = inputs.filter(i => i.value).length;
 
-  word.textContent = letters.join('');
-  progress.textContent = `${filled} van ${inputs.length} antwoorden ingevuld`;
 
-  success.style.display =
+/* Foto's en antwoordvelden */
+
+vragen.forEach((vraag, index) => {
+
+  const card = document.createElement("article");
+  card.className = "card";
+
+  const img = document.createElement("img");
+  img.className = "photo";
+  img.src = vraag.foto;
+  img.alt = `Foto bij huisnummer ${vraag.huis}`;
+
+  img.onerror = () => {
+    const missing = document.createElement("div");
+    missing.className = "missing";
+    missing.innerHTML =
+      `<div><b>Foto ontbreekt</b><br>${vraag.foto}</div>`;
+
+    img.replaceWith(missing);
+  };
+
+
+  const body = document.createElement("div");
+  body.className = "body";
+
+
+  const house = document.createElement("div");
+  house.className = "house";
+  house.textContent = `Huisnummer ${vraag.huis}`;
+
+
+  const row = document.createElement("div");
+  row.className = "row";
+
+
+  const label = document.createElement("label");
+  label.textContent = "Jouw letter:";
+
+
+  const input = document.createElement("input");
+
+  // Belangrijk: hiermee kan de instuurknop
+  // deze velden later allemaal terugvinden.
+  input.id = `antwoord-${index}`;
+
+  input.maxLength = 1;
+  input.autocomplete = "off";
+
+  input.setAttribute(
+    "aria-label",
+    `Letter voor huisnummer ${vraag.huis}`
+  );
+
+
+  input.addEventListener("input", () => {
+
+    input.value = input.value
+      .replace(/[^a-z]/gi, "")
+      .toUpperCase();
+
+    update();
+
+  });
+
+
+  row.appendChild(label);
+  row.appendChild(input);
+
+  body.appendChild(house);
+  body.appendChild(row);
+
+  card.appendChild(img);
+  card.appendChild(body);
+
+  quiz.appendChild(card);
+
+});
+
+
+/* ==========================================================
+   WOORD BIJWERKEN
+   ========================================================== */
+
+function update() {
+
+  const inputs = [
+    ...document.querySelectorAll('input[id^="antwoord-"]')
+  ];
+
+  const letters = inputs.map(
+    input => input.value || "_"
+  );
+
+  const filled = inputs.filter(
+    input => input.value
+  ).length;
+
+
+  word.textContent = letters.join("");
+
+  progress.textContent =
+    `${filled} van ${inputs.length} antwoorden ingevuld`;
+
+
+  if (
     juisteWoord &&
     filled === inputs.length &&
-    inputs.map(i => i.value).join('') === juisteWoord.toUpperCase()
-      ? 'block'
-      : 'none';
+    inputs.map(input => input.value).join("") ===
+      juisteWoord.toUpperCase()
+  ) {
+
+    success.style.display = "block";
+
+  } else {
+
+    success.style.display = "none";
+
+  }
+
 }
+
+
+/* Eerste keer uitvoeren */
 
 update();
 
-document.getElementById("submitButton").addEventListener("click", () => {
-  const message = document.getElementById("submitMessage");
-  const naam = document.getElementById("naam").value.trim();
 
-  const inputs = [...document.querySelectorAll('input[id^="antwoord-"]')];
-  const antwoord = inputs.map(input => input.value).join("");
+/* ==========================================================
+   ANTWOORD INSTUREN
+   ========================================================== */
 
-  if (!naam) {
-    message.textContent = "Vul eerst je naam in.";
-    document.getElementById("naam").focus();
-    return;
-  }
+document
+  .getElementById("submitButton")
+  .addEventListener("click", () => {
 
-  if (antwoord.length !== inputs.length) {
-    message.textContent = `Vul eerst alle ${inputs.length} letters in.`;
-    return;
-  }
+    const message =
+      document.getElementById("submitMessage");
 
-  const formData = new URLSearchParams();
+    const naam =
+      document.getElementById("naam")
+        .value
+        .trim();
 
-  formData.append(GOOGLE_FORM_NAME_ENTRY, naam);
-  formData.append(GOOGLE_FORM_ANSWER_ENTRY, antwoord);
 
-  fetch(GOOGLE_FORM_URL, {
-    method: "POST",
-    mode: "no-cors",
-    body: formData
-  })
-  .then(() => {
-    message.textContent = "✅ Je antwoord is ingestuurd!";
-    document.getElementById("submitButton").disabled = true;
-  })
-  .catch(() => {
-    message.textContent =
-      "Er ging iets mis met insturen. Controleer de Google Forms-instellingen.";
+    const inputs = [
+      ...document.querySelectorAll(
+        'input[id^="antwoord-"]'
+      )
+    ];
+
+
+    const antwoord =
+      inputs
+        .map(input => input.value)
+        .join("");
+
+
+    /* Naam controleren */
+
+    if (!naam) {
+
+      message.textContent =
+        "Vul eerst je naam in.";
+
+      document
+        .getElementById("naam")
+        .focus();
+
+      return;
+    }
+
+
+    /* Controleren of alle letters zijn ingevuld */
+
+    if (antwoord.length !== inputs.length) {
+
+      message.textContent =
+        `Vul eerst alle ${inputs.length} letters in.`;
+
+      return;
+    }
+
+
+    /* Gegevens klaarmaken voor Google Forms */
+
+    const formData =
+      new URLSearchParams();
+
+    formData.append(
+      GOOGLE_FORM_NAME_ENTRY,
+      naam
+    );
+
+    formData.append(
+      GOOGLE_FORM_ANSWER_ENTRY,
+      antwoord
+    );
+
+
+    /* Versturen */
+
+    fetch(GOOGLE_FORM_URL, {
+
+      method: "POST",
+
+      mode: "no-cors",
+
+      body: formData
+
+    })
+
+    .then(() => {
+
+      message.textContent =
+        "✅ Je antwoord is ingestuurd!";
+
+      document
+        .getElementById("submitButton")
+        .disabled = true;
+
+    })
+
+    .catch(() => {
+
+      message.textContent =
+        "Er ging iets mis met insturen. Controleer de Google Forms-instellingen.";
+
+    });
+
   });
-});
 
 </script></body></html>
