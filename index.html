@@ -95,12 +95,21 @@ header .sub{
   display: inline-block;
   width: 1.2em;
 }
+.title-icon{
+  width:32px;
+  height:32px;
+  object-fit:contain;
+  vertical-align:-5px;
+}
+.section-icon{ width:24px; height:24px; object-fit:contain; vertical-align:-5px; }
 
 </style>
 </head>
 <body><main>
-<header><h1>📷 Fotoquiz</h1><p class="sub">Vind het perceel dat het dichtste aan de foto grenst, vul de letter in die bij het huisnummer hoort en ontdek het geheime woord.</p></header>
-<section class="decoder"><div class="decoder-inner"><div class="title">🔑 Huisnummer → letter</div><div class="key" id="key"></div></div></section>
+
+  
+<header><h1><img src="fotos/camera.png" class="title-icon"> Fotoquiz</h1><p class="sub">Vind het perceel dat het dichtste aan de foto grenst, vul de letter in die bij het huisnummer hoort en ontdek het geheime woord.</p></header>
+<section class="decoder"><div class="decoder-inner"><div class="title"><div class="title"> <img src="fotos/loep.png" class="section-icon"> Huisnummer → letter</div><div class="key" id="key"></div></div></section>
 <div class="progress" id="progress"></div><section class="quiz" id="quiz"></section>
 <section class="wordbox">
    
