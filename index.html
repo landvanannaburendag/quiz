@@ -8,19 +8,32 @@
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
 main{max-width:920px;margin:auto;padding:24px 16px 60px}
 header{
+  position:relative;
   text-align:center;
   margin-bottom:20px;
-  min-height:260px;
+  min-height:220px;
   display:flex;
   flex-direction:column;
-  justify-content:center;
+  justify-content:flex-start;
   align-items:center;
-  padding:40px 20px;
-  background-image:url("fotos/rand.png");
-  background-size:cover;
-  background-position:center;
+  padding:90px 40px 30px;
+  background:white;
   border-radius:18px;
-  color:white;
+  overflow:hidden;
+}
+
+header::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:url("fotos/banner.png") center top / 100% auto no-repeat;
+  pointer-events:none;
+}
+
+header h1,
+header .sub{
+  position:relative;
+  z-index:1;
 }
    h1{font-size:clamp(2rem,6vw,3rem);margin:0 0 6px}.sub{color:var(--muted);margin:0}
 .decoder{position:sticky;top:0;z-index:20;padding:10px 0;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(8px)}
