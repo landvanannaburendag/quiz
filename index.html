@@ -118,7 +118,10 @@ header .sub{
 <header><h1><img src="fotos/camera.png" class="title-icon"> Fotoquiz</h1><p class="sub">Vind het perceel dat het dichtste aan de foto grenst, vul de letter in die bij het huisnummer hoort en ontdek het geheime woord.</p></header>
 <section class="decoder">
   <div class="decoder-inner">
-    <img src="fotos/loep.png" class="section-icon"> Huisnummer → letter</div>
+    <div class="title">
+      <img src="fotos/loep.png" class="section-icon">
+      Huisnummer → letter
+    </div>
 
     <img
       src="fotos/vertaaltabel.png"
@@ -167,29 +170,6 @@ header .sub{
    QUIZ INSTELLINGEN
    ========================================================== */
 
-const cijferNaarLetter = {
-  1:"D",
-  2:"L",
-  3:"E",
-  4:"K",
-  5:"T",
-  6:"H",
-  7:"G",
-  8:"Z",
-  9:"A",
-  10:"P",
-  11:"S",
-  12:"M",
-  13:"O",
-  14:"V",
-  15:"R",
-  16:"B",
-  17:"I",
-  18:"J",
-  19:"F",
-  20:"U"
-};
-
 
 const vragen = [
   {huis:1, foto:"fotos/gm2.jpeg"},
@@ -233,26 +213,10 @@ const GOOGLE_FORM_ANSWER_ENTRY = "entry.88578047";
    ELEMENTEN OP DE PAGINA
    ========================================================== */
 
-const key = document.getElementById("key");
 const quiz = document.getElementById("quiz");
 const word = document.getElementById("word");
 const progress = document.getElementById("progress");
 const success = document.getElementById("success");
-
-
-/* ==========================================================
-   CIJFER → LETTER TABEL
-   ========================================================== */
-
-Object.entries(cijferNaarLetter).forEach(([nummer, letter]) => {
-
-  const span = document.createElement("span");
-
-  span.textContent = `${nummer} = ${letter}`;
-
-  key.appendChild(span);
-
-});
 
 
 /* ==========================================================
